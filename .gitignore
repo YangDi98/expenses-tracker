@@ -1,0 +1,4 @@
+instance
+*.sqlite
+__pycache__
+

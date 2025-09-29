@@ -1,0 +1,11 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Force Python files to use LF in repo, but convert to CRLF on checkout for Windows
+*.py text eol=lf
+
+# Optional: other file types
+*.sql text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.md text eol=lf
