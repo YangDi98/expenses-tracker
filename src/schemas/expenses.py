@@ -6,6 +6,7 @@ class ExpenseSchema(Schema):
     id = fields.Int(dump_only=True)
     amount = fields.Float(required=True)
     note = fields.Str()
+    category_id = fields.Int(required=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     deleted_at = fields.DateTime(dump_only=True)
@@ -14,11 +15,13 @@ class ExpenseSchema(Schema):
 class UpdateExpenseSchema(Schema):
     amount = fields.Float()
     note = fields.Str()
+    category_id = fields.Int()
 
 
 class ExpenseRequestSchema(PaginationRequestSchema):
     start_date = fields.DateTime()
     end_date = fields.DateTime()
+    category_id = fields.Int()
 
 
 class ExpenseResponseSchema(PaginationResponseSchema):
