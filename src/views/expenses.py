@@ -3,6 +3,7 @@ from http import HTTPStatus
 from flask import url_for
 
 from src.models.expenses import Expense
+from src.models.categories import Category
 from src.schemas.expenses import (
     ExpenseSchema,
     UpdateExpenseSchema,
@@ -51,6 +52,7 @@ def get_expense(expense_id):
 @blueprint.arguments(ExpenseSchema, location="json")
 @blueprint.response(HTTPStatus.CREATED, schema=ExpenseSchema)
 def create_expense(expense_data):
+    Category.get_by_id_or_404(expense_data["category_id"])
     expense = Expense(**expense_data)
     expense.save(commit=True)
     return expense
@@ -60,6 +62,7 @@ def create_expense(expense_data):
 @blueprint.arguments(UpdateExpenseSchema, location="json")
 @blueprint.response(HTTPStatus.OK, schema=ExpenseSchema)
 def update_expense(expense_data, expense_id):
+    Category.get_by_id_or_404(expense_data["category_id"])
     expense = Expense.get_by_id_or_404(expense_id)
     expense.update(expense_data, commit=True)
     return expense

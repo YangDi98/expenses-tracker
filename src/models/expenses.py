@@ -19,11 +19,9 @@ class Expense(SoftDeleteModel, CreateUpdateModel):
     note: Mapped[str] = mapped_column(String(255), nullable=True)
     category_id: Mapped[int] = mapped_column(
         db.ForeignKey("categories.id", name="fk_expense_category_id"),
-        nullable=True,
+        nullable=False,
     )
-    category: Mapped[Optional["Category"]] = relationship(
-        back_populates="expenses"
-    )
+    category: Mapped["Category"] = relationship(back_populates="expenses")
 
     @classmethod
     def filter(

@@ -54,4 +54,5 @@ Add Category for Expense
 ### After adding this feature:
 - Think about what to do if a category is deleted. Where do we want to put its expenses. Or we just not allow deleting categories that have expenses.
 - User has not been added yet.
+- We need to check if a category exist when adding note to this category, or updating notes to this category.
 </details>
