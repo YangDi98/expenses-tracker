@@ -1,4 +1,4 @@
-# Notes App (Flask)
+# Expenses Tracker App (Flask)
 
 A simple Flask-based application for managing expenses.  
 Built as a practice project to explore backend development with Flask, including routing, templates, forms, and database integration.
