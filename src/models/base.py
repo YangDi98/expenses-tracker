@@ -26,6 +26,14 @@ class BaseModel(db.Model):
             abort(HTTPStatus.NOT_FOUND, message="item not found")
         return result
 
+    @classmethod
+    def create(cls, data: dict, commit: bool = True, **kwargs):
+        instance = cls(**data, **kwargs)
+        db.session.add(instance)
+        if commit:
+            db.session.commit()
+        return instance
+
     def save(self, commit: bool = False):
         db.session.add(self)
         if commit:
