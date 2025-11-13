@@ -2,6 +2,8 @@ from sqlalchemy import String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
+from flask_smorest import abort
+from http import HTTPStatus
 from sqlalchemy import and_, or_
 
 from src.models.base import SoftDeleteModel, CreateUpdateModel
@@ -10,6 +12,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.models.categories import Category
+    from src.models.users import User
 
 
 class Expense(SoftDeleteModel, CreateUpdateModel):
@@ -22,10 +25,16 @@ class Expense(SoftDeleteModel, CreateUpdateModel):
         nullable=False,
     )
     category: Mapped["Category"] = relationship(back_populates="expenses")
+    user_id: Mapped[int] = mapped_column(
+        db.ForeignKey("users.id", name="fk_expense_user_id"),
+        nullable=True,
+    )
+    user: Mapped["User"] = relationship(back_populates="expenses")
 
     @classmethod
     def filter(
         cls,
+        user_id: int,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         category_ids: Optional[list[int]] = None,
@@ -34,6 +43,7 @@ class Expense(SoftDeleteModel, CreateUpdateModel):
         cursor_id: Optional[int] = None,
     ):
         stmt = cls.select_active()
+        stmt = stmt.where(Expense.user_id == user_id)
         if cursor_created_at and cursor_id:
             stmt = stmt.where(
                 or_(
@@ -56,3 +66,16 @@ class Expense(SoftDeleteModel, CreateUpdateModel):
             Expense.created_at.desc(), Expense.id.desc()
         ).limit(limit)
         return db.session.execute(stmt).scalars().all()
+
+    @classmethod
+    def get_by_user_id_and_id_or_404(cls, user_id: int, id: int):
+        stmt = cls.select_active().where(
+            and_(cls.id == id, cls.user_id == user_id)
+        )
+        result = db.session.execute(stmt).scalars().first()
+        if not result:
+            abort(
+                HTTPStatus.NOT_FOUND,
+                message=f"Expense with id {id} not found for user {user_id}",
+            )
+        return result

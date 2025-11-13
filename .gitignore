@@ -1,4 +1,5 @@
 instance
 *.sqlite
 __pycache__
+.env
 
