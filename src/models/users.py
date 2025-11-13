@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, or_
 
 from src.models.base import SoftDeleteModel, CreateUpdateModel
-from src.extensions import db
+from src.extensions import db, bcrypt
 from typing import TYPE_CHECKING
 
 
@@ -36,3 +36,8 @@ class User(SoftDeleteModel, CreateUpdateModel):
             or_(cls.username == login.lower(), cls.email == login.lower())
         )
         return db.session.execute(stmt).scalars().first()
+
+    def set_password(self, password: str):
+        hashed = bcrypt.generate_password_hash(password).decode("utf-8")
+        self.password_hash = hashed
+        self.save()
