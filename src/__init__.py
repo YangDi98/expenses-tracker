@@ -4,6 +4,7 @@ from http import HTTPStatus
 from datetime import timedelta
 from dotenv import load_dotenv
 from typing import Optional
+from marshmallow import ValidationError
 import os
 
 from src.extensions import db, migrate, bcrypt, jwt
@@ -58,6 +59,34 @@ def register_jwt_handlers(jwt):
         )
 
 
+def register_app_handlers(app):
+    @app.errorhandler(HTTPStatus.UNPROCESSABLE_ENTITY)
+    def handle_unprocessable_entity(err):
+        return error_message(
+            HTTPStatus.BAD_REQUEST,
+            "Bad Request",
+            "Invalid request",
+            err.exc.messages if hasattr(err, "exc") else None,
+        )
+
+    @app.errorhandler(ValidationError)
+    def handle_validation_error(err):
+        return error_message(
+            HTTPStatus.BAD_REQUEST,
+            "Bad Request",
+            "Invalid input data",
+            err.messages,
+        )
+
+    @app.errorhandler(HTTPStatus.NOT_FOUND)
+    def handle_not_found(err):
+        return error_message(
+            HTTPStatus.NOT_FOUND,
+            "Not Found",
+            "The requested resource was not found",
+        )
+
+
 def create_app(config: Optional[dict] = None):
     load_dotenv()
     app = Flask("Flask Expense Tracker API")
@@ -82,15 +111,6 @@ def create_app(config: Optional[dict] = None):
     jwt.init_app(app)
 
     from src import models  # noqa: F401
-
-    @app.errorhandler(HTTPStatus.UNPROCESSABLE_ENTITY)
-    def handle_unprocessable_entity(err):
-        return error_message(
-            HTTPStatus.BAD_REQUEST,
-            "Bad Request",
-            "Invalid request",
-            err.exc.messages if hasattr(err, "exc") else None,
-        )
 
     register_jwt_handlers(jwt)
 
