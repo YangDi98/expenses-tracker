@@ -155,3 +155,28 @@ class TestAuth:
         assert response.status_code == HTTPStatus.UNAUTHORIZED
         data = response.get_json()
         assert data["message"] == "Invalid credentials"
+
+    def test_logout(self, authenticated_client):
+        response = authenticated_client.post("/auth/logout")
+        assert response.status_code == HTTPStatus.OK
+        data = response.get_json()
+        assert data["message"] == "Logout successful"
+        cookies = response.headers.getlist("Set-Cookie")
+        # Check that JWT cookies are being unset (deleted)
+        refresh_cookie_deleted = any(
+            "refresh_token=" in cookie
+            and ("Expires=" in cookie or "Max-Age=0" in cookie)
+            for cookie in cookies
+        )
+        assert refresh_cookie_deleted
+
+    def test_revoked_token_access(self, authenticated_client):
+        # Logout to revoke the token
+        response = authenticated_client.post("/auth/logout")
+        assert response.status_code == HTTPStatus.OK
+
+        # Try to access a protected route with the revoked token
+        response = authenticated_client.get("/auth/who_am_i")
+        assert response.status_code == HTTPStatus.UNAUTHORIZED
+        data = response.get_json()
+        assert data["message"] == "Token is not valid"

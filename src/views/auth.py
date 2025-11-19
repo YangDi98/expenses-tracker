@@ -1,11 +1,13 @@
 from flask_smorest import Blueprint, abort
 from flask import jsonify
 from http import HTTPStatus
+from datetime import datetime, timezone
 from sqlalchemy import or_
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     set_refresh_cookies,
+    unset_jwt_cookies,
     jwt_required,
     current_user,
 )
@@ -81,6 +83,16 @@ def refresh_token():
         ),
         HTTPStatus.OK,
     )
+
+
+@blueprint.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    current_user.last_logout_at = datetime.now(timezone.utc)
+    current_user.save()
+    response = jsonify({"message": "Logout successful"})
+    unset_jwt_cookies(response)
+    return response, HTTPStatus.OK
 
 
 @blueprint.route("/who_am_i", methods=["GET"])

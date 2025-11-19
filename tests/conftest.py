@@ -91,7 +91,6 @@ def test_user(test_db):
         commit=False,
     )
     user.set_password("password123@AAA")
-    user.save()
     test_db.session.add(user)
     test_db.session.commit()
     return user
@@ -103,7 +102,7 @@ def authenticated_client(client, test_user, app):
 
     response = client.post(
         "/auth/login",
-        json={"email": test_user.email, "password": "password123@AAA"},
+        json={"login": test_user.email, "password": "password123@AAA"},
         follow_redirects=True,
     )
     token = response.get_json()["access_token"]

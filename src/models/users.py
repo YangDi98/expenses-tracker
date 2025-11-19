@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, or_
+from sqlalchemy import String, or_, DateTime
+from datetime import datetime
 
 from src.models.base import SoftDeleteModel, CreateUpdateModel
 from src.extensions import db, bcrypt
@@ -28,6 +29,7 @@ class User(SoftDeleteModel, CreateUpdateModel):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     expenses: Mapped[list["Expense"]] = relationship(back_populates="user")
     categories: Mapped[list["Category"]] = relationship(back_populates="user")
+    last_logout_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     @classmethod
     def get_by_username_or_email(cls, login: str):

@@ -34,7 +34,7 @@ class BaseModel(db.Model):
             db.session.commit()
         return instance
 
-    def save(self, commit: bool = False):
+    def save(self, commit: bool = True):
         db.session.add(self)
         if commit:
             db.session.commit()
