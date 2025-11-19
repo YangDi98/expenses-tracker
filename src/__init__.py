@@ -5,6 +5,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from typing import Optional
 from marshmallow import ValidationError
+from datetime import datetime, timezone
 import os
 
 from src.extensions import db, migrate, bcrypt, jwt
@@ -42,6 +43,21 @@ def register_jwt_handlers(jwt):
             return None
         return user
 
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        user = db.session.execute(
+            User.select_with_deleted().where(
+                User.id == int(jwt_payload["sub"])
+            )
+        ).scalar_one_or_none()
+        if user is None or user.deleted_at is not None or not user.active:
+            return True
+        last_logout = user.last_logout_at
+        if last_logout is None:
+            return False
+        token_iat = datetime.fromtimestamp(jwt_payload["iat"], tz=timezone.utc)
+        return token_iat <= last_logout.replace(tzinfo=timezone.utc)
+
     @jwt.unauthorized_loader
     def handle_unauthorized_error(err):
         return error_message(
@@ -56,6 +72,14 @@ def register_jwt_handlers(jwt):
             HTTPStatus.UNAUTHORIZED,
             "Unauthorized",
             "Account is inactive or has been deleted",
+        )
+
+    @jwt.revoked_token_loader
+    def handle_revoked_token(_jwt_header, _jwt_payload):
+        return error_message(
+            HTTPStatus.UNAUTHORIZED,
+            "Unauthorized",
+            "Token is not valid",
         )
 
 
@@ -113,6 +137,7 @@ def create_app(config: Optional[dict] = None):
     from src import models  # noqa: F401
 
     register_jwt_handlers(jwt)
+    register_app_handlers(app)
 
     api = Api(app)
     api.register_blueprint(ExpenseBlueprint)
