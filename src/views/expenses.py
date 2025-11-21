@@ -67,6 +67,7 @@ def get_expense(user_id, expense_id):
 def create_expense(expense_data, user_id):
     Category.get_by_user_id_and_id_or_404(user_id, expense_data["category_id"])
     expense = Expense(**expense_data)
+    expense.user_id = user_id
     expense.save(commit=True)
     return expense
 
@@ -77,7 +78,10 @@ def create_expense(expense_data, user_id):
 @jwt_required()
 @user_access_required
 def update_expense(expense_data, user_id, expense_id):
-    Category.get_by_user_id_and_id_or_404(user_id, expense_data["category_id"])
+    if "category_id" in expense_data:
+        Category.get_by_user_id_and_id_or_404(
+            user_id, expense_data["category_id"]
+        )
     expense = Expense.get_by_user_id_and_id_or_404(user_id, expense_id)
     expense.update(expense_data, commit=True)
     return expense

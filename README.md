@@ -21,5 +21,9 @@ We use flake8 and black for linting and formatting. Run:
 ```
 poetry run python et-cli.py lint
 ```
+### Test coverage
+```
+poetry run pytest --cov=src --cov-report=term-missing --cov-report=html tests/
+```
 ## License
 This project is for learning purposes.

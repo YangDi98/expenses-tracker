@@ -10,6 +10,7 @@ class ExpenseSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     deleted_at = fields.DateTime(dump_only=True)
+    user_id = fields.Int(dump_only=True)
 
 
 class UpdateExpenseSchema(Schema):
@@ -21,7 +22,7 @@ class UpdateExpenseSchema(Schema):
 class ExpenseRequestSchema(PaginationRequestSchema):
     start_date = fields.DateTime()
     end_date = fields.DateTime()
-    category_id = fields.Int()
+    category_ids = fields.List(fields.Int())
 
 
 class ExpenseResponseSchema(PaginationResponseSchema):
