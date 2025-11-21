@@ -11,6 +11,7 @@ import os
 from src.extensions import db, migrate, bcrypt, jwt
 from src.views.expenses import blueprint as ExpenseBlueprint
 from src.views.auth import blueprint as AuthBlueprint
+from src.views.categories import blueprint as CategoryBlueprint
 from src.models.users import User
 
 
@@ -142,5 +143,6 @@ def create_app(config: Optional[dict] = None):
     api = Api(app)
     api.register_blueprint(ExpenseBlueprint)
     api.register_blueprint(AuthBlueprint)
+    api.register_blueprint(CategoryBlueprint)
 
     return app
