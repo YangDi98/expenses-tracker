@@ -6,20 +6,30 @@ Built as a practice project to explore backend development with Flask, including
 ---
 
 ## Getting Started
-
-### 1. Install dependencies
+## Copy Environment File:
 ```
-poetry install
+cp .env.sample .env
 ```
-### 2. Run project
+Edit `.env` and fill in your actual values
+### Build and run project
 ```
-poetry run flask run
+docker-compose up --build
+```
+### Run migration
+```
+docker-compose exec web flask db upgrade
 ```
 ## Development
+### Run tests
+```
+docker-compose exec web pytest
+# Run specific test file
+docker-compose exec web pytest tests/test_auth.py 
+```
 ### Linting
 We use flake8 and black for linting and formatting. Run:
 ```
-poetry run python et-cli.py lint
+docker-compose exec web python et-cli.py lint
 ```
 ## License
 This project is for learning purposes.
