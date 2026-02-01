@@ -24,4 +24,4 @@ FROM base AS prod
 RUN poetry install --no-interaction --no-ansi --no-root --no-dev
 
 COPY . .
-CMD ["flask", "run"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "src:create_app()"]
