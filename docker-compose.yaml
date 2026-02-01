@@ -27,6 +27,7 @@ services:
       POSTGRES_PASSWORD: expense_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql  # initialization script
     ports:
       - "5434:5432"
     healthcheck:

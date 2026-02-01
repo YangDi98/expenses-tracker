@@ -1,0 +1,1 @@
+create database expense_tracker_test_db owner expense_user;
