@@ -2,9 +2,8 @@ FROM python:3.13-alpine as base
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir poetry==2.1.3
 
-RUN pip install poetry && \
+RUN pip install --no-cache-dir poetry==2.1.3 && \
     poetry config virtualenvs.create false 
 
 COPY poetry.lock pyproject.toml ./

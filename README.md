@@ -26,6 +26,12 @@ docker-compose exec web pytest
 # Run specific test file
 docker-compose exec web pytest tests/test_auth.py 
 ```
+
+### Run tests with coverage
+```
+docker-compose exec web pytest --cov=src --cov-report=html tests/
+```
+
 ### Linting
 We use flake8 and black for linting and formatting. Run:
 ```
