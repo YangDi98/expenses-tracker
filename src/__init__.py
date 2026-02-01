@@ -123,7 +123,7 @@ def create_app(config: Optional[dict] = None):
     database_uri = os.getenv("DATABASE_URI", "sqlite:///expenses_db.sqlite")
     app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    
+
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
