@@ -2,5 +2,6 @@ instance
 *.sqlite
 __pycache__
 .env
+.coverage
 htmlcov/
 
