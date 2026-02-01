@@ -47,7 +47,9 @@ class AuthenticatedClient:
 def app():
     config = {
         "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": os.getenv("TEST_DATABASE_URI", f"sqlite:///{TEST_DB_PATH}"),
+        "SQLALCHEMY_DATABASE_URI": os.getenv(
+            "TEST_DATABASE_URI", f"sqlite:///{TEST_DB_PATH}"
+        ),
     }
     app = create_app(config)
     with app.app_context():
